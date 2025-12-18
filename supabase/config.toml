@@ -1,0 +1,4 @@
+project_id = "zmkmfqqfodtkjxitqtvm"
+
+[functions.fetch-coffee-prices]
+verify_jwt = false
