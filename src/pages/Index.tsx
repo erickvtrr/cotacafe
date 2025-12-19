@@ -227,7 +227,7 @@ const Index = () => {
           <AdBanner
             variant="horizontal"
             isPaid={true}
-            imageUrl="/ads/banner-cooperativa.jpg"
+            imageUrl="/ads/syscampo.png"
             linkUrl="https://cooperativa.com.br"
             altText="Cooperativa X - Seu café valorizado"
           />
