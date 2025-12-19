@@ -19,7 +19,7 @@ const AdBanner = ({ variant = "horizontal", className }: AdBannerProps) => {
         )}
       >
         <img
-          src="/public/syscampo.png"
+          src="/syscampo.png"
           alt="Anúncio - Erick Silva"
           className="w-full h-auto"
         />
