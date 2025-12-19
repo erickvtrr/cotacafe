@@ -9,6 +9,25 @@ interface AdBannerProps {
 const AdBanner = ({ variant = "horizontal", className }: AdBannerProps) => {
   if (variant === "horizontal") {
     return (
+      <a 
+      href="https://api.whatsapp.com/send?phone=5527997856364&text=Ol%C3%A1%2C+tenho+interesse+em+anunciar+no+site+cota%C3%A7%C3%A3o+do+caf%C3%A9%21%0A" 
+      target="_blank" 
+      rel="noopener noreferrer"
+      className={cn(
+        "relative overflow-hidden rounded-xl block transition-all duration-300 hover:opacity-90",
+        className
+      )}
+    >
+      <img 
+        src="/public/syscampo.png" 
+        alt="Anúncio - Erick Silva"
+        className="w-full h-auto"
+      />
+    </a>
+  );
+}
+      
+      
       <div className={cn(
         "relative overflow-hidden rounded-xl border-2 border-dashed border-border bg-secondary/30 p-4 md:p-6 transition-all duration-300 hover:border-accent/50 hover:bg-secondary/50 group",
         className
