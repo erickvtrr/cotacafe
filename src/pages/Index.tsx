@@ -227,8 +227,12 @@ const Index = () => {
           <AdBanner
             variant="horizontal"
             isPaid={true}
-            imageUrl="/ads/syscampo.png"
-            linkUrl="https://cotacafe.vercel.app/"
+            imageUrls={[
+              "/ads/syscampo.jpg",
+              "/ads/syscampo.jpg",
+              "/ads/syscampo.jpg",
+            ]}
+            linkUrl="https://api.whatsapp.com/send?phone=5527997856364&text=Olá%2C+gostaria+de+conhecer+o+sistema+Syscampos!"
             altText="Cooperativa X - Seu café valorizado"
           />
         </div>

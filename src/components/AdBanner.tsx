@@ -7,6 +7,7 @@ interface AdBannerProps {
   // Props para anúncios pagos
   isPaid?: boolean;
   imageUrl?: string;
+  imageUrls?: string[];
   linkUrl?: string;
   altText?: string;
 }
@@ -20,7 +21,11 @@ const AdBanner = ({
   altText = "Anúncio",
 }: AdBannerProps) => {
   // Prioridade para anúncios pagos quando fornecidos
-  if (isPaid && imageUrl && linkUrl) {
+  // Se for anúncio pago e houver múltiplas imagens, renderiza 3 imagens dentro do link
+  if (isPaid && (imageUrls?.length || imageUrl) && linkUrl) {
+    const imgs =
+      imageUrls && imageUrls.length ? imageUrls : imageUrl ? [imageUrl] : [];
+
     return (
       <a
         href={linkUrl}
@@ -30,13 +35,20 @@ const AdBanner = ({
           "relative overflow-hidden rounded-xl block transition-all duration-300 hover:opacity-90 hover:shadow-lg",
           className
         )}
-        style={{
-          backgroundImage: `url(${imageUrl})`,
-          backgroundRepeat: "repeat",
-          backgroundSize: "contain",
-          minHeight: "400px",
-        }}
-      ></a>
+      >
+        <div className="w-full flex gap-2 items-center justify-center p-2 md:p-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="flex-1 flex items-center justify-center">
+              <img
+                src={imgs[i] ?? imgs[0]}
+                alt={altText}
+                className="w-full h-[180px] md:h-[220px] object-contain bg-transparent block"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      </a>
     );
   }
   if (variant === "horizontal") {
@@ -49,13 +61,34 @@ const AdBanner = ({
           "relative overflow-hidden rounded-xl block transition-all duration-300 hover:opacity-90",
           className
         )}
-        style={{
-          backgroundImage: "url(/ads/syscampo.jpg)",
-          backgroundRepeat: "repeat",
-          backgroundSize: "contain",
-          minHeight: "400px",
-        }}
-      ></a>
+      >
+        <div className="w-full flex gap-2 items-center justify-center p-2 md:p-4">
+          <div className="flex-1 flex items-center justify-center">
+            <img
+              src="/ads/syscampo.jpg"
+              alt="Anúncio Syscampo 1"
+              className="w-full h-[180px] md:h-[220px] object-contain block"
+              loading="lazy"
+            />
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <img
+              src="/ads/syscampo.jpg"
+              alt="Anúncio Syscampo 2"
+              className="w-full h-[180px] md:h-[220px] object-contain block"
+              loading="lazy"
+            />
+          </div>
+          <div className="flex-1 flex items-center justify-center">
+            <img
+              src="/ads/syscampo.jpg"
+              alt="Anúncio Syscampo 3"
+              className="w-full h-[180px] md:h-[220px] object-contain block"
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </a>
     );
   }
 
