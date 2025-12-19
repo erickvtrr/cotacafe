@@ -1,7 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import Header from "@/components/Header";
 import CoffeeCard from "@/components/CoffeeCard";
 import AdBanner from "@/components/AdBanner";
+import AdCarousel from "@/components/AdCarousel";
 import Footer from "@/components/Footer";
 import { RefreshCw, AlertTriangle, Wifi, WifiOff } from "lucide-react";
 import { fetchCoffeePrices } from "@/lib/api/coffeePrices";
@@ -17,87 +18,107 @@ interface CoffeeData {
 
 const Index = () => {
   const { toast } = useToast();
-  const [coffeeData, setCoffeeData] = useState<{
-    conilon: CoffeeData;
-    arabica: CoffeeData;
-  }>({
-    conilon: {
-      price: 0,
-      variation: 0,
-      variationPercent: 0,
-      lastUpdate: "-",
-      type: "CONILON 7/8",
-    },
-    arabica: {
-      price: 0,
-      variation: 0,
-      variationPercent: 0,
-      lastUpdate: "-",
-      type: "ARÁBICA RIO",
-    },
+  const lastValidPrices = useRef<{ conilon: number; arabica: number } | null>(null);
+  const [coffeeData, setCoffeeData] = useState<{ conilon: CoffeeData; arabica: CoffeeData }>({
+    conilon: { price: 0, variation: 0, variationPercent: 0, lastUpdate: '-', type: 'CONILON 7/8' },
+    arabica: { price: 0, variation: 0, variationPercent: 0, lastUpdate: '-', type: 'ARÁBICA RIO' },
   });
   const [isLoading, setIsLoading] = useState(true);
-  const [dataSource, setDataSource] = useState<
-    "paineldocafe" | "fallback" | "loading"
-  >("loading");
+  const [dataSource, setDataSource] = useState<'paineldocafe' | 'fallback' | 'loading'>('loading');
 
   const formatLastUpdate = (isoDate?: string) => {
-    if (!isoDate)
-      return new Date().toLocaleString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-      });
-
+    if (!isoDate) return new Date().toLocaleString('pt-BR', { 
+      day: '2-digit', 
+      month: '2-digit', 
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    });
+    
     try {
-      return new Date(isoDate).toLocaleString("pt-BR", {
-        day: "2-digit",
-        month: "2-digit",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
+      return new Date(isoDate).toLocaleString('pt-BR', { 
+        day: '2-digit', 
+        month: '2-digit', 
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
       });
     } catch {
-      return "-";
+      return '-';
     }
   };
 
   const loadPrices = async () => {
     setIsLoading(true);
-
+    
     try {
       const response = await fetchCoffeePrices();
-
-      const lastUpdate = formatLastUpdate(response.data.lastUpdate);
-
-      setCoffeeData({
-        conilon: {
-          price: response.data.conilon.price,
-          variation: response.data.conilon.variation,
-          variationPercent: response.data.conilon.variationPercent,
-          lastUpdate,
-          type: response.data.conilon.type || "CONILON 7/8",
-        },
-        arabica: {
-          price: response.data.arabica.price,
-          variation: response.data.arabica.variation,
-          variationPercent: response.data.arabica.variationPercent,
-          lastUpdate,
-          type: response.data.arabica.type || "ARÁBICA RIO",
-        },
-      });
-
-      setDataSource(response.source || "fallback");
+      
+      // Only update if we got real data (not fallback) OR if we don't have any data yet
+      const isRealData = response.source === 'paineldocafe';
+      const hasValidPrices = response.data.conilon.price > 0 && response.data.arabica.price > 0;
+      
+      if (isRealData && hasValidPrices) {
+        // Store the last valid prices from real source
+        lastValidPrices.current = {
+          conilon: response.data.conilon.price,
+          arabica: response.data.arabica.price,
+        };
+        
+        const lastUpdate = formatLastUpdate(response.data.lastUpdate);
+        
+        setCoffeeData({
+          conilon: {
+            price: response.data.conilon.price,
+            variation: response.data.conilon.variation,
+            variationPercent: response.data.conilon.variationPercent,
+            lastUpdate,
+            type: response.data.conilon.type || 'CONILON 7/8',
+          },
+          arabica: {
+            price: response.data.arabica.price,
+            variation: response.data.arabica.variation,
+            variationPercent: response.data.arabica.variationPercent,
+            lastUpdate,
+            type: response.data.arabica.type || 'ARÁBICA RIO',
+          },
+        });
+        setDataSource('paineldocafe');
+      } else if (!lastValidPrices.current && hasValidPrices) {
+        // First load - use whatever we have
+        const lastUpdate = formatLastUpdate(response.data.lastUpdate);
+        
+        setCoffeeData({
+          conilon: {
+            price: response.data.conilon.price,
+            variation: response.data.conilon.variation,
+            variationPercent: response.data.conilon.variationPercent,
+            lastUpdate,
+            type: response.data.conilon.type || 'CONILON 7/8',
+          },
+          arabica: {
+            price: response.data.arabica.price,
+            variation: response.data.arabica.variation,
+            variationPercent: response.data.arabica.variationPercent,
+            lastUpdate,
+            type: response.data.arabica.type || 'ARÁBICA RIO',
+          },
+        });
+        setDataSource(response.source || 'fallback');
+      }
+      // If we have lastValidPrices and got fallback data, keep the current values (don't update)
+      
     } catch (error) {
-      console.error("Error loading prices:", error);
-      setDataSource("fallback");
-      toast({
-        title: "Erro ao carregar cotações",
-        description: "Usando valores de referência.",
-        variant: "destructive",
-      });
+      console.error('Error loading prices:', error);
+      // Keep existing data on error, don't show fallback
+      if (!lastValidPrices.current) {
+        setDataSource('fallback');
+        toast({
+          title: "Erro ao carregar cotações",
+          description: "Tentando novamente...",
+          variant: "destructive",
+        });
+      }
     } finally {
       setIsLoading(false);
     }
@@ -116,12 +137,9 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
-
+      
       {/* Preços */}
-      <section
-        id="precos"
-        className="relative overflow-hidden bg-gradient-hero pt-6 pb-12 md:pt-8 md:pb-16"
-      >
+      <section id="precos" className="relative overflow-hidden bg-gradient-hero pt-6 pb-12 md:pt-8 md:pb-16">
         <div className="absolute inset-0 overflow-hidden">
           <div className="absolute -left-20 top-20 h-64 w-64 rounded-full bg-accent/10 blur-3xl" />
           <div className="absolute -right-20 bottom-20 h-80 w-80 rounded-full bg-primary-foreground/5 blur-3xl" />
@@ -130,9 +148,9 @@ const Index = () => {
         <div className="container relative z-10">
           <div className="text-center mb-6">
             <div className="mb-3 inline-flex items-center gap-2 rounded-full bg-primary-foreground/10 px-4 py-1.5 backdrop-blur-sm">
-              {dataSource === "paineldocafe" ? (
+              {dataSource === 'paineldocafe' ? (
                 <Wifi className="h-3.5 w-3.5 text-accent" />
-              ) : dataSource === "loading" ? (
+              ) : dataSource === 'loading' ? (
                 <RefreshCw className="h-3.5 w-3.5 text-accent animate-spin" />
               ) : (
                 <WifiOff className="h-3.5 w-3.5 text-primary-foreground/60" />
@@ -185,56 +203,36 @@ const Index = () => {
 
           {/* Botão Atualizar */}
           <div className="flex flex-col items-center gap-2">
-            <button
+            <button 
               onClick={loadPrices}
               disabled={isLoading}
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary-foreground/10 text-primary-foreground font-medium text-sm hover:bg-primary-foreground/20 transition-all backdrop-blur-sm disabled:opacity-50 border border-primary-foreground/20"
             >
-              <RefreshCw
-                className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
-              />
-              {isLoading ? "Atualizando..." : "Atualizar"}
+              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              {isLoading ? 'Atualizando...' : 'Atualizar'}
             </button>
-
+            
             <div className="flex items-center gap-2 text-[10px] text-primary-foreground/50 text-center">
               <AlertTriangle className="h-3 w-3 shrink-0" />
-              <span>
-                Valores de referência. Para negociações, consulte sua
-                cooperativa.
-              </span>
+              <span>Valores de referência. Para negociações, consulte sua cooperativa.</span>
             </div>
           </div>
         </div>
 
         <div className="absolute bottom-0 left-0 right-0">
-          <svg
-            viewBox="0 0 1440 40"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full"
-          >
-            <path
-              d="M0 40V20C360 5 720 0 1080 10C1260 15 1380 25 1440 20V40H0Z"
+          <svg viewBox="0 0 1440 40" fill="none" xmlns="http://www.w3.org/2000/svg" className="w-full">
+            <path 
+              d="M0 40V20C360 5 720 0 1080 10C1260 15 1380 25 1440 20V40H0Z" 
               fill="hsl(var(--background))"
             />
           </svg>
         </div>
       </section>
 
-      {/* Espaço para Anúncio Principal */}
+      {/* Carrossel de Anúncios */}
       <section className="py-6">
-        <div className="container">
-          <AdBanner
-            variant="horizontal"
-            isPaid={true}
-            imageUrls={[
-              "/ads/syscampo.jpg",
-              "/ads/syscampo.jpg",
-              "/ads/syscampo.jpg",
-            ]}
-            linkUrl="https://api.whatsapp.com/send?phone=5527997856364&text=Olá%2C+gostaria+de+conhecer+o+sistema+Syscampos!"
-            altText="Cooperativa X - Seu café valorizado"
-          />
+        <div className="container max-w-2xl">
+          <AdCarousel />
         </div>
       </section>
 

@@ -4,102 +4,15 @@ import { cn } from "@/lib/utils";
 interface AdBannerProps {
   variant?: "horizontal" | "card";
   className?: string;
-  // Props para anúncios pagos
-  isPaid?: boolean;
-  imageUrl?: string;
-  imageUrls?: string[];
-  linkUrl?: string;
-  altText?: string;
 }
 
-const AdBanner = ({
-  variant = "horizontal",
-  className,
-  isPaid = false,
-  imageUrl,
-  linkUrl,
-  altText = "Anúncio",
-}: AdBannerProps) => {
-  // Prioridade para anúncios pagos quando fornecidos
-  // Se for anúncio pago e houver múltiplas imagens, renderiza 3 imagens dentro do link
-  if (isPaid && (imageUrls?.length || imageUrl) && linkUrl) {
-    const imgs =
-      imageUrls && imageUrls.length ? imageUrls : imageUrl ? [imageUrl] : [];
-
-    return (
-      <a
-        href={linkUrl}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn(
-          "relative overflow-hidden rounded-xl block transition-all duration-300 hover:opacity-90 hover:shadow-lg",
-          className
-        )}
-      >
-        <div className="w-full flex gap-2 items-center justify-center p-2 md:p-4">
-          {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="flex-1 flex items-center justify-center">
-              <img
-                src={imgs[i] ?? imgs[0]}
-                alt={altText}
-                className="w-full h-[180px] md:h-[220px] object-contain bg-transparent block"
-                loading="lazy"
-              />
-            </div>
-          ))}
-        </div>
-      </a>
-    );
-  }
+const AdBanner = ({ variant = "horizontal", className }: AdBannerProps) => {
   if (variant === "horizontal") {
     return (
-      <a
-        href="https://api.whatsapp.com/send?phone=5527997856364&text=Olá%2C+gostaria+de+conhecer+o+sistema+Syscampos!"
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn(
-          "relative overflow-hidden rounded-xl block transition-all duration-300 hover:opacity-90",
-          className
-        )}
-      >
-        <div className="w-full flex gap-2 items-center justify-center p-2 md:p-4">
-          <div className="flex-1 flex items-center justify-center">
-            <img
-              src="/ads/syscampo.jpg"
-              alt="Anúncio Syscampo 1"
-              className="w-full h-[180px] md:h-[220px] object-contain block"
-              loading="lazy"
-            />
-          </div>
-          <div className="flex-1 flex items-center justify-center">
-            <img
-              src="/ads/syscampo.jpg"
-              alt="Anúncio Syscampo 2"
-              className="w-full h-[180px] md:h-[220px] object-contain block"
-              loading="lazy"
-            />
-          </div>
-          <div className="flex-1 flex items-center justify-center">
-            <img
-              src="/ads/syscampo.jpg"
-              alt="Anúncio Syscampo 3"
-              className="w-full h-[180px] md:h-[220px] object-contain block"
-              loading="lazy"
-            />
-          </div>
-        </div>
-      </a>
-    );
-  }
-
-  if (variant === "card") {
-    return (
-      <div
-        className={cn(
-          "relative overflow-hidden rounded-xl border-2 border-dashed border-border bg-secondary/30 p-4 md:p-6 transition-all duration-300 hover:border-accent/50 hover:bg-secondary/50 group",
-          className
-        )}
-      >
+      <div className={cn(
+        "relative overflow-hidden rounded-xl border-2 border-dashed border-border bg-secondary/30 p-4 md:p-6 transition-all duration-300 hover:border-accent/50 hover:bg-secondary/50 group",
+        className
+      )}>
         <div className="flex flex-col md:flex-row items-center justify-center gap-3 md:gap-4 text-center md:text-left">
           <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-accent/10 group-hover:bg-accent/20 transition-colors">
             <Megaphone className="h-5 w-5 text-accent" />
@@ -110,7 +23,7 @@ const AdBanner = ({
               Sua marca vista por milhares de produtores e compradores de café
             </p>
           </div>
-          <a
+          <a 
             href="https://w.app/erick"
             target="_blank"
             rel="noopener noreferrer"
@@ -124,12 +37,10 @@ const AdBanner = ({
   }
 
   return (
-    <div
-      className={cn(
-        "relative overflow-hidden rounded-xl border-2 border-dashed border-border bg-secondary/30 p-6 transition-all duration-300 hover:border-accent/50 hover:bg-secondary/50 group text-center",
-        className
-      )}
-    >
+    <div className={cn(
+      "relative overflow-hidden rounded-xl border-2 border-dashed border-border bg-secondary/30 p-6 transition-all duration-300 hover:border-accent/50 hover:bg-secondary/50 group text-center",
+      className
+    )}>
       <div className="flex flex-col items-center gap-4">
         <div className="flex h-14 w-14 items-center justify-center rounded-xl bg-accent/10 group-hover:bg-accent/20 transition-colors">
           <Megaphone className="h-7 w-7 text-accent" />
@@ -137,11 +48,10 @@ const AdBanner = ({
         <div>
           <p className="font-semibold text-foreground mb-1">Anuncie Aqui</p>
           <p className="text-sm text-muted-foreground leading-relaxed">
-            Cooperativas, corretoras e empresas de insumos: alcance seu público
-            ideal
+            Cooperativas, corretoras e empresas de insumos: alcance seu público ideal
           </p>
         </div>
-        <a
+        <a 
           href="https://w.app/erick"
           target="_blank"
           rel="noopener noreferrer"
