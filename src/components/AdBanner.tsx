@@ -4,9 +4,37 @@ import { cn } from "@/lib/utils";
 interface AdBannerProps {
   variant?: "horizontal" | "card";
   className?: string;
+  // Props para anúncios pagos
+  isPaid?: boolean;
+  imageUrl?: string;
+  linkUrl?: string;
+  altText?: string;
 }
 
-const AdBanner = ({ variant = "horizontal", className }: AdBannerProps) => {
+const AdBanner = ({
+  variant = "horizontal",
+  className,
+  isPaid = false,
+  imageUrl,
+  linkUrl,
+  altText = "Anúncio",
+}: AdBannerProps) => {
+  // Prioridade para anúncios pagos quando fornecidos
+  if (isPaid && imageUrl && linkUrl) {
+    return (
+      <a
+        href={linkUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn(
+          "relative overflow-hidden rounded-xl block transition-all duration-300 hover:opacity-90 hover:shadow-lg",
+          className
+        )}
+      >
+        <img src={imageUrl} alt={altText} className="w-full h-auto" />
+      </a>
+    );
+  }
   if (variant === "horizontal") {
     return (
       <a
@@ -19,7 +47,7 @@ const AdBanner = ({ variant = "horizontal", className }: AdBannerProps) => {
         )}
       >
         <img
-          src="/syscampo.png"
+          src="/ads/syscampo.png"
           alt="Anúncio - Erick Silva"
           className="w-full h-auto"
         />
