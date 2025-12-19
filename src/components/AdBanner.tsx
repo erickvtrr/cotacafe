@@ -30,9 +30,13 @@ const AdBanner = ({
           "relative overflow-hidden rounded-xl block transition-all duration-300 hover:opacity-90 hover:shadow-lg",
           className
         )}
-      >
-        <img src={imageUrl} alt={altText} className="w-full h-auto" />
-      </a>
+        style={{
+          backgroundImage: `url(${imageUrl})`,
+          backgroundRepeat: "repeat",
+          backgroundSize: "contain",
+          minHeight: "400px",
+        }}
+      ></a>
     );
   }
   if (variant === "horizontal") {
@@ -45,13 +49,13 @@ const AdBanner = ({
           "relative overflow-hidden rounded-xl block transition-all duration-300 hover:opacity-90",
           className
         )}
-      >
-        <img
-          src="/ads/syscampo.png"
-          alt="Anúncio - Erick Silva"
-          className="w-full h-auto"
-        />
-      </a>
+        style={{
+          backgroundImage: "url(/ads/syscampo.png)",
+          backgroundRepeat: "repeat",
+          backgroundSize: "contain",
+          minHeight: "400px",
+        }}
+      ></a>
     );
   }
 
