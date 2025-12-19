@@ -228,7 +228,7 @@ const Index = () => {
             variant="horizontal"
             isPaid={true}
             imageUrl="/ads/syscampo.png"
-            linkUrl="https://cooperativa.com.br"
+            linkUrl="https://cotacafe.vercel.app/"
             altText="Cooperativa X - Seu café valorizado"
           />
         </div>
