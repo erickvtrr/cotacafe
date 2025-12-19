@@ -42,7 +42,7 @@ const AdBanner = ({
   if (variant === "horizontal") {
     return (
       <a
-        href="https://api.whatsapp.com/send?phone=5527997856364&text=Ol%C3%A1%2C+tenho+interesse+em+anunciar+no+site+cota%C3%A7%C3%A3o+do+caf%C3%A9%21%0A"
+        href="https://api.whatsapp.com/send?phone=5527997856364&text=Olá%2C+gostaria+de+conhecer+o+sistema+Syscampos!"
         target="_blank"
         rel="noopener noreferrer"
         className={cn(
@@ -50,7 +50,7 @@ const AdBanner = ({
           className
         )}
         style={{
-          backgroundImage: "url(/ads/syscampo.jpg)",
+          backgroundImage: "url(/ads/syscampo.jpe g)",
           backgroundRepeat: "repeat",
           backgroundSize: "contain",
           minHeight: "400px",
