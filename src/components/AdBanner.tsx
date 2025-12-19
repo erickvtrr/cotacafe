@@ -50,7 +50,7 @@ const AdBanner = ({
           className
         )}
         style={{
-          backgroundImage: "url(/ads/syscampo.jpe g)",
+          backgroundImage: "url(/ads/syscampo.jpeg)",
           backgroundRepeat: "repeat",
           backgroundSize: "contain",
           minHeight: "400px",
